@@ -28,6 +28,13 @@ function swapDirection() {
 
 const { copy, copied } = useClipboard()
 
+function speak(text: string) {
+  if (!text.trim() || !('speechSynthesis' in window)) return
+  const utterance = new SpeechSynthesisUtterance(text)
+  utterance.lang = 'id-ID'
+  speechSynthesis.speak(utterance)
+}
+
 function saveToHistory() {
   if (!input.value.trim()) return
   history.value.unshift({
@@ -85,13 +92,22 @@ function clearHistory() {
           <p class="text-base whitespace-pre-wrap text-slate-900">
             {{ output }}
           </p>
-          <button
-            class="absolute top-2 right-2 h-8 w-8 flex items-center justify-center rounded-md hover:bg-slate-100"
-            aria-label="Salin"
-            @click="copy(output)"
-          >
-            {{ copied ? '✓' : '⧉' }}
-          </button>
+          <div class="absolute top-2 right-2 flex gap-1">
+            <button
+              class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-slate-100"
+              aria-label="Salin"
+              @click="copy(output)"
+            >
+              {{ copied ? '✓' : '⧉' }}
+            </button>
+            <button
+              class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-slate-100"
+              aria-label="Dengarkan"
+              @click="speak(output)"
+            >
+              🔊
+            </button>
+          </div>
         </div>
       </div>
 
