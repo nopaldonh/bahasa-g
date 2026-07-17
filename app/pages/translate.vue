@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ArrowLeftRight, Check, Copy, Volume2 } from '@lucide/vue'
 import { fromBahasaG, toBahasaG } from '~/composables/useBahasaG'
 
 interface HistoryEntry {
@@ -62,74 +63,82 @@ function clearHistory() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 px-4 py-10">
+  <div class="min-h-screen bg-background px-4 py-10">
     <div class="mx-auto max-w-3xl">
-      <h1 class="text-2xl font-medium text-slate-900 mb-1">
+      <h1 class="text-2xl font-medium text-foreground mb-1">
         Bahasa G Terjemahan
       </h1>
 
       <div class="flex items-center justify-between mb-3">
-        <span class="text-sm text-slate-600">{{ directionLabel }}</span>
-        <button
-          class="h-9 w-9 flex items-center justify-center rounded-md border border-slate-200 hover:bg-slate-100"
+        <span class="text-sm text-muted-foreground">{{ directionLabel }}</span>
+        <Button
+          variant="outline"
+          size="icon"
           aria-label="Tukar arah"
           @click="swapDirection"
         >
-          ⇄
-        </button>
+          <ArrowLeftRight class="size-4" />
+        </Button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <textarea
+        <Textarea
           v-model="input"
           rows="6"
           placeholder="Ketik kalimat di sini..."
-          class="w-full rounded-lg border border-slate-200 bg-white p-3 text-base focus:outline-none focus:ring-2 focus:ring-slate-300"
+          class="text-base"
         />
-        <div
-          class="relative rounded-lg bg-white border border-slate-200 p-3 min-h-[144px]"
-        >
-          <p class="text-base whitespace-pre-wrap text-slate-900">
-            {{ output }}
-          </p>
-          <div class="absolute top-2 right-2 flex gap-1">
-            <button
-              class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-slate-100"
-              aria-label="Salin"
-              @click="copy(output)"
-            >
-              {{ copied ? '✓' : '⧉' }}
-            </button>
-            <button
-              class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-slate-100"
-              aria-label="Dengarkan"
-              @click="speak(output)"
-            >
-              🔊
-            </button>
-          </div>
-        </div>
+        <Card class="relative min-h-36">
+          <CardContent class="p-3">
+            <p class="text-base whitespace-pre-wrap text-foreground">
+              {{ output }}
+            </p>
+            <div class="absolute top-2 right-2 flex gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                class="h-8 w-8"
+                aria-label="Salin"
+                @click="copy(output)"
+              >
+                <Check v-if="copied" class="size-4" />
+                <Copy v-else class="size-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                class="h-8 w-8"
+                aria-label="Dengarkan"
+                @click="speak(output)"
+              >
+                <Volume2 class="size-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div v-if="history.length" class="mt-10">
         <div class="flex items-center justify-between mb-2">
-          <h2 class="text-sm font-medium text-slate-700">Riwayat</h2>
-          <button
-            class="text-xs text-slate-400 hover:text-slate-600"
+          <h2 class="text-sm font-medium text-foreground">Riwayat</h2>
+          <Button
+            variant="link"
+            size="sm"
+            class="h-auto p-0 text-muted-foreground"
             @click="clearHistory"
           >
             Hapus semua
-          </button>
+          </Button>
         </div>
         <ul class="space-y-2">
-          <li
-            v-for="entry in history"
-            :key="entry.id"
-            class="rounded-md border border-slate-200 bg-white p-3 text-sm cursor-pointer hover:border-slate-300"
-            @click="loadFromHistory(entry)"
-          >
-            <p class="text-slate-500">{{ entry.input }}</p>
-            <p class="text-slate-900">{{ entry.output }}</p>
+          <li v-for="entry in history" :key="entry.id">
+            <Card
+              class="cursor-pointer p-3 text-sm hover:border-foreground/20"
+              @click="loadFromHistory(entry)"
+            >
+              <p class="text-muted-foreground">{{ entry.input }}</p>
+              <p class="text-foreground">{{ entry.output }}</p>
+            </Card>
           </li>
         </ul>
       </div>
