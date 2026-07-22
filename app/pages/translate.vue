@@ -9,35 +9,27 @@ import {
   Volume2,
   X,
 } from '@lucide/vue'
-import { fromBahasaG, toBahasaG } from '~/composables/useBahasaG'
 
 interface HistoryEntry {
   id: string
   input: string
   output: string
-  direction: 'toG' | 'fromG'
+  sourceLangId: LangId
+  targetLangId: LangId
   timestamp: number
 }
 
-const input = ref('')
-const direction = ref<'toG' | 'fromG'>('toG')
 const history = useLocalStorage<HistoryEntry[]>('bahasa-g-history', [])
 
-const output = computed(() =>
-  direction.value === 'toG' ? toBahasaG(input.value) : fromBahasaG(input.value),
-)
-
-const sourceLang = computed(() =>
-  direction.value === 'toG' ? 'Indonesia' : 'Bahasa G',
-)
-const targetLang = computed(() =>
-  direction.value === 'toG' ? 'Bahasa G' : 'Indonesia',
-)
-
-function swapDirection() {
-  input.value = output.value
-  direction.value = direction.value === 'toG' ? 'fromG' : 'toG'
-}
+const {
+  input,
+  output,
+  sourceLangId,
+  targetLangId,
+  sourceLang,
+  targetLang,
+  swapLanguages,
+} = useBahasaG()
 
 const { copy, copied } = useClipboard()
 
@@ -54,7 +46,8 @@ function saveToHistory() {
     id: crypto.randomUUID(),
     input: input.value,
     output: output.value,
-    direction: direction.value,
+    sourceLangId: sourceLang.value.id,
+    targetLangId: targetLang.value.id,
     timestamp: Date.now(),
   })
   history.value = history.value.slice(0, 50)
@@ -66,7 +59,8 @@ watch(output, () => debouncedSave())
 
 function loadFromHistory(entry: HistoryEntry) {
   input.value = entry.input
-  direction.value = entry.direction
+  sourceLangId.value = entry.sourceLangId
+  targetLangId.value = entry.targetLangId
 }
 
 function clearHistory() {
@@ -116,19 +110,19 @@ function clearHistory() {
 
       <div class="flex items-center mb-1 gap-3">
         <span class="flex-1">
-          {{ sourceLang }}
+          {{ sourceLang.name }}
         </span>
         <Button
           variant="ghost"
           size="icon"
           class="rounded-full"
           aria-label="Tukar bahasa"
-          @click="swapDirection"
+          @click="swapLanguages"
         >
           <ArrowLeftRight />
         </Button>
         <span class="flex-1">
-          {{ targetLang }}
+          {{ targetLang.name }}
         </span>
       </div>
 

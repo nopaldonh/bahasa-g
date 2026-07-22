@@ -104,3 +104,69 @@ export function toBahasaG(text: string): string {
 export function fromBahasaG(text: string): string {
   return text.replace(/([aiueoAIUEO])g\1/g, '$1')
 }
+
+interface LangItem {
+  id: string
+  name: string
+}
+
+const langs = {
+  id: { id: 'id', name: 'Bahasa Indonesia' },
+  g: { id: 'g', name: 'Bahasa G' },
+} as const satisfies Record<string, LangItem>
+
+export type LangId = keyof typeof langs
+type Lang = (typeof langs)[LangId]
+
+function getLang(id: LangId) {
+  return langs[id]
+}
+
+interface UseBahasaGOptions {
+  sourceLang?: LangId
+  targetLang?: LangId
+}
+
+interface UseBahasaGRreturn {
+  sourceLangId: Ref<LangId>
+  targetLangId: Ref<LangId>
+  sourceLang: Ref<Lang>
+  targetLang: Ref<Lang>
+  input: Ref<string>
+  output: ComputedRef<string>
+  swapLanguages: () => void
+}
+
+export function useBahasaG(
+  options?: UseBahasaGOptions | undefined,
+): UseBahasaGRreturn {
+  const sourceLangId = ref<LangId>(options?.sourceLang || 'id')
+  const targetLangId = ref<LangId>(options?.targetLang || 'g')
+
+  const input = ref('')
+  const output = computed(() => {
+    return sourceLangId.value === 'id'
+      ? toBahasaG(input.value)
+      : fromBahasaG(input.value)
+  })
+
+  const sourceLang = computed(() => getLang(sourceLangId.value))
+  const targetLang = computed(() => getLang(targetLangId.value))
+
+  function swapLanguages() {
+    input.value = output.value
+    const sourceLangIdTemp = sourceLangId.value
+    sourceLangId.value = targetLangId.value
+    targetLangId.value = sourceLangIdTemp
+  }
+
+  return {
+    sourceLangId,
+    targetLangId,
+    sourceLang,
+    targetLang,
+    input,
+    output,
+    swapLanguages,
+  }
+}
