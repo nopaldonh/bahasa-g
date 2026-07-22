@@ -18,8 +18,11 @@ const output = computed(() =>
   direction.value === 'toG' ? toBahasaG(input.value) : fromBahasaG(input.value),
 )
 
-const directionLabel = computed(() =>
-  direction.value === 'toG' ? 'Indonesia → Bahasa G' : 'Bahasa G → Indonesia',
+const sourceLang = computed(() =>
+  direction.value === 'toG' ? 'Indonesia' : 'Bahasa G',
+)
+const targetLang = computed(() =>
+  direction.value === 'toG' ? 'Bahasa G' : 'Indonesia',
 )
 
 function swapDirection() {
@@ -69,16 +72,22 @@ function clearHistory() {
         Bahasa G Terjemahan
       </h1>
 
-      <div class="flex items-center justify-between mb-3">
-        <span class="text-sm text-muted-foreground">{{ directionLabel }}</span>
+      <div class="flex items-center mb-1 gap-3">
+        <span class="flex-1">
+          {{ sourceLang }}
+        </span>
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
-          aria-label="Tukar arah"
+          class="rounded-full"
+          aria-label="Tukar bahasa"
           @click="swapDirection"
         >
-          <ArrowLeftRight class="size-4" />
+          <ArrowLeftRight />
         </Button>
+        <span class="flex-1">
+          {{ targetLang }}
+        </span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
