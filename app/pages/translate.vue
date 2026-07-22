@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { ArrowLeftRight, Check, Copy, Volume2 } from '@lucide/vue'
+import {
+  ArrowLeftRight,
+  Check,
+  Copy,
+  History,
+  House,
+  Volume2,
+} from '@lucide/vue'
 import { fromBahasaG, toBahasaG } from '~/composables/useBahasaG'
 
 interface HistoryEntry {
@@ -66,11 +73,44 @@ function clearHistory() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background px-4 py-10">
-    <div class="mx-auto max-w-3xl">
-      <h1 class="text-2xl font-medium text-foreground mb-1">
-        Bahasa G Terjemahan
-      </h1>
+  <div class="min-h-screen bg-background p-4">
+    <div class="mx-auto max-w-6xl">
+      <header class="mb-6 flex items-center justify-between">
+        <div class="flex items-center gap-2.5 select-none">
+          <NuxtLink
+            to="/"
+            class="transition-transform duration-200 ease-out hover:-translate-y-1 flex items-center gap-1"
+          >
+            <Button
+              as="span"
+              variant="secondary"
+              size="icon-lg"
+              class="rounded-full"
+            >
+              <House class="size-5" />
+            </Button>
+            <span class="text-xl font-medium text-foreground"> Bahasa G </span>
+          </NuxtLink>
+          <NuxtLink
+            to="/translate"
+            class="font-medium text-xl text-foreground transition-transform duration-200 ease-out hover:-translate-y-1"
+          >
+            Terjemahan
+          </NuxtLink>
+        </div>
+
+        <!-- TODO: Add history toggle functionality -->
+        <Button
+          variant="ghost"
+          size="icon-lg"
+          class="rounded-full"
+          @click="() => {}"
+        >
+          <History class="size-5" />
+        </Button>
+      </header>
+
+      <h1 class="sr-only">Bahasa G Terjemahan</h1>
 
       <div class="flex items-center mb-1 gap-3">
         <span class="flex-1">
