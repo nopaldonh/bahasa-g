@@ -5,7 +5,9 @@ import {
   Copy,
   History,
   House,
+  Star,
   Volume2,
+  X,
 } from '@lucide/vue'
 import { fromBahasaG, toBahasaG } from '~/composables/useBahasaG'
 
@@ -131,40 +133,88 @@ function clearHistory() {
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Textarea
-          v-model="input"
-          rows="6"
-          placeholder="Ketik kalimat di sini..."
-          class="text-base"
-        />
-        <Card class="relative min-h-36">
-          <CardContent class="p-3">
-            <p class="text-base whitespace-pre-wrap text-foreground">
-              {{ output }}
-            </p>
-            <div class="absolute top-2 right-2 flex gap-1">
-              <Button
+        <InputGroup>
+          <InputGroup
+            class="dark:bg-transparent has-[[data-slot=input-group-control]:focus-visible]:border-0 has-[[data-slot=input-group-control]:focus-visible]:ring-0 border-0 shadow-none"
+          >
+            <InputGroupTextarea
+              v-model="input"
+              placeholder="Ketik kalimat di sini..."
+              class="min-h-36 md:text-lg py-2"
+            />
+            <InputGroupAddon
+              v-if="input"
+              align="inline-end"
+              class="h-full items-start"
+            >
+              <InputGroupButton
                 variant="ghost"
-                size="icon"
-                class="h-8 w-8"
-                aria-label="Salin"
-                @click="copy(output)"
+                size="icon-sm"
+                class="rounded-full"
+                aria-label="Hapus teks sumber"
+                @click="input = ''"
               >
-                <Check v-if="copied" class="size-4" />
-                <Copy v-else class="size-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                class="h-8 w-8"
-                aria-label="Dengarkan"
-                @click="speak(output)"
-              >
-                <Volume2 class="size-4" />
-              </Button>
+                <X />
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
+          <InputGroupAddon align="block-end" class="border-t">
+            <InputGroupButton
+              size="icon-sm"
+              class="rounded-full"
+              aria-label="Dengarkan"
+              @click="speak(input)"
+            >
+              <Volume2 />
+            </InputGroupButton>
+            <InputGroupText class="font-medium text-xs ml-auto">
+              {{ input.length }} karakter
+            </InputGroupText>
+          </InputGroupAddon>
+        </InputGroup>
+
+        <InputGroup class="bg-muted dark:bg-muted">
+          <InputGroup class="h-full dark:bg-transparent border-0 shadow-none">
+            <div class="w-full flex-1 min-w-0 px-3 py-2 min-h-36">
+              <p class="md:text-lg whitespace-pre-wrap break-all">
+                {{ output || 'Terjemahan' }}
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <InputGroupAddon
+              v-if="output"
+              align="inline-end"
+              class="h-full items-start"
+            >
+              <!-- TODO: implement favorite/save output action -->
+              <InputGroupButton
+                size="icon-sm"
+                variant="ghost"
+                @click="() => {}"
+              >
+                <Star />
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
+          <InputGroupAddon align="block-end" class="border-t">
+            <InputGroupButton
+              size="icon-sm"
+              class="rounded-full"
+              aria-label="Dengarkan"
+              @click="speak(output)"
+            >
+              <Volume2 />
+            </InputGroupButton>
+            <InputGroupButton
+              size="icon-sm"
+              class="ml-auto rounded-full"
+              aria-label="Salin"
+              @click="copy(output)"
+            >
+              <Check v-if="copied" />
+              <Copy v-else />
+            </InputGroupButton>
+          </InputGroupAddon>
+        </InputGroup>
       </div>
 
       <div v-if="history.length" class="mt-10">
