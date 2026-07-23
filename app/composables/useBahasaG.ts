@@ -118,7 +118,7 @@ const langs = {
 export type LangId = keyof typeof langs
 type Lang = (typeof langs)[LangId]
 
-function getLang(id: LangId) {
+export function getLang(id: LangId) {
   return langs[id]
 }
 
