@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   ArrowLeftRight,
+  ArrowRight,
   Check,
   Copy,
   History,
@@ -226,11 +227,18 @@ function clearHistory() {
         <ul class="space-y-2">
           <li v-for="entry in history" :key="entry.id">
             <Card
-              class="cursor-pointer p-3 text-sm hover:border-foreground/20"
+              class="p-3 gap-3 cursor-pointer text-sm hover:bg-accent"
               @click="loadFromHistory(entry)"
             >
-              <p class="text-muted-foreground">{{ entry.input }}</p>
-              <p class="text-foreground">{{ entry.output }}</p>
+              <div class="flex items-center gap-3">
+                <span>{{ getLang(entry.sourceLangId).name }}</span>
+                <ArrowRight class="size-4" />
+                <span>{{ getLang(entry.targetLangId).name }}</span>
+              </div>
+              <div>
+                <p class="text-foreground">{{ entry.input }}</p>
+                <p class="text-muted-foreground">{{ entry.output }}</p>
+              </div>
             </Card>
           </li>
         </ul>
